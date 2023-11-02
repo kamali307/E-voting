@@ -1,0 +1,434 @@
+package Evote.vote;
+import java.util.ArrayList;
+import java.util.*;
+
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+
+public class App extends Application {
+	ArrayList <String> userlist =new ArrayList<String>();
+	ArrayList <String> passwordlist =new ArrayList<String>();
+	ArrayList <String> nominee =new ArrayList<String>();
+	ArrayList <String> age =new ArrayList<String>();
+
+	ArrayList <String> address =new ArrayList<String>();
+
+	ArrayList <String> id =new ArrayList<String>();
+	
+	ArrayList <String> party =new ArrayList<String>();
+
+
+	String [] result=new String[100];
+	int i=0;
+    public static void main(String[] args) {
+    	
+        launch(args);
+    }
+    
+    @Override
+    public void start(Stage primaryStage) {
+    	i=0;
+    	userlist.add("root");
+    	passwordlist.add("root");
+        //nominee.add("DMK");
+        //nominee.add("ADMK");
+
+    	nominee.add("NOTA");
+    	id.add(null);
+    	address.add(null);
+    	party.add(null);
+    	age.add(null);
+    	primaryStage.setTitle("e-Voting System");
+
+        // Create a grid pane to hold the UI elements
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        homepage(grid);
+        
+        
+        Scene scene = new Scene(grid, 400, 300);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    
+    
+
+    private void homepage(GridPane grid) {
+		grid.getChildren().clear();
+
+    	Label heading = new Label("Welcome To E-voting portal");
+
+        Button voteBtn = new Button();
+        voteBtn.setText("        Vote     ");
+        voteBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            	page(grid);
+            }
+        });
+
+        Button registerBtn = new Button();
+        registerBtn.setText("     Result     ");
+        registerBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                result(grid);
+            }
+        });
+
+        Button nominationBtn = new Button();
+        nominationBtn.setText("Nomination");
+        nominationBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            	nPage(grid);
+            }
+        });
+        
+        heading.setAlignment(Pos.TOP_CENTER);
+    	
+         grid.add(heading, 0, 0);
+         grid.add(voteBtn, 1, 3);
+         
+         grid.add(registerBtn, 1, 5);
+         grid.add(nominationBtn, 1, 4);
+         
+
+     }
+		
+	
+
+	protected void result(GridPane grid) {
+		grid.getChildren().clear();
+		result=counter(result);
+		int j=0;
+		for(String i:result)
+		{
+			Label usernameLabel = new Label(i);
+	        grid.add(usernameLabel, 0, j+1);
+	        j++;
+		}
+		 
+		
+		
+	}
+
+	private void page(GridPane grid) {
+    	
+    	grid.getChildren().clear();
+    	// Create a label for the username
+        Label usernameLabel = new Label("Username:");
+        grid.add(usernameLabel, 0, 1);
+
+        // Create a text field for the username
+        final TextField usernameField = new TextField();
+        grid.add(usernameField, 1, 1);
+
+        // Create a label for the password
+        Label passwordLabel = new Label("Password:");
+        grid.add(passwordLabel, 0, 2);
+
+        // Create a password field for the password
+        PasswordField passwordField = new PasswordField();
+        grid.add(passwordField, 1, 2);
+
+        // Create a login button
+        Button loginButton = new Button("Login");
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(loginButton);
+        grid.add(hbBtn, 1, 4);
+        
+        // Create a login button
+        Button regButton = new Button("New Registration");
+        HBox rgBtn = new HBox(10);
+        rgBtn.setAlignment(Pos.BOTTOM_LEFT);
+        rgBtn.getChildren().add(regButton);
+        grid.add(rgBtn, 0, 4);
+        
+        Button home = new Button("Home Page");
+        grid.add(home, 0, 0);
+        home.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				homepage(grid);
+			}
+				
+		});
+        // Set an action for the login button
+        loginButton.setOnAction(event -> {
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+
+            // Validate the username and password
+            if (validateCredentials(username, password)) {
+                
+                showVotingPage(grid);
+            } else {
+                // Login failed, show an error message
+                showErrorMessage("Invalid username or password.",grid);
+            }
+        });
+        
+        regButton.setOnAction(event -> {                
+                regPage(grid);
+        });
+
+        
+        
+	}
+
+	private void nPage(GridPane nominationForm) {
+		
+		nominationForm.getChildren().clear();
+		 // Create a GridPane to organize the form layout
+        
+
+        // Create form elements for the nomination form
+        Label nameLabel = new Label("Name:");
+        TextField nameField = new TextField();
+        Label ageLabel = new Label("Age:");
+        TextField ageField = new TextField();
+        Label addressLabel = new Label("Address:");
+        TextField addressField = new TextField();
+        Label idLabel = new Label("ID:");
+        TextField idField = new TextField();
+        Label partyLabel = new Label("Party Affiliation:");
+        TextField partyField = new TextField();
+        Button submitButton = new Button("Submit Nomination");
+        Button show = new Button("Show Nominations");
+        
+        //Add the form elements to the grid
+        nominationForm.add(nameLabel, 0, 1);
+        nominationForm.add(nameField, 1, 1);
+        nominationForm.add(ageLabel, 0, 2);
+        nominationForm.add(ageField, 1, 2);
+        nominationForm.add(addressLabel, 0, 3);
+        nominationForm.add(addressField, 1, 3);
+        nominationForm.add(idLabel, 0, 4);
+        nominationForm.add(idField, 1, 4);
+        nominationForm.add(partyLabel, 0, 5);
+        nominationForm.add(partyField, 1, 5);
+        nominationForm.add(submitButton, 1, 6);
+        nominationForm.add(show, 0, 6);
+        Button home = new Button("Home Page");
+        nominationForm.add(home, 0, 0);
+        submitButton.setOnAction(new EventHandler<ActionEvent>() {
+           
+            public void handle(ActionEvent event) {
+            	nominee.add(nameField.getText());
+            	id.add(idField.getText());
+            	age.add(ageField.getText());
+            	address.add(addressField.getText());
+            	party.add(partyField.getText());
+            	Label l = new Label("Successfully submitted");
+            	result[i]=nameField.getText();
+            	i++;
+            	nominationForm.add(l, 1, 7);
+            	
+                
+            }
+        });
+        home.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				homepage(nominationForm);
+			}
+				
+		});
+   
+        show.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				nominees(nominationForm);
+			}
+				
+		});
+   
+
+		
+	}
+
+	protected void nominees(GridPane grid) {
+		grid.getChildren().clear();
+		int j=1;
+		Button home = new Button("Home Page");
+        grid.add(home, 0, 0);
+		for(int i=2; i<=nominee.size();i++) {
+        	Label a= new Label("candidate name	  : "+nominee.get(i-1));
+            grid.add(a, 0, j);
+            j++;
+            Label b= new Label("candidate age     : "+age.get(i-1));
+            grid.add(b, 0, j);
+            j++;
+            Label c= new Label("candidate address : "+address.get(i-1));
+            grid.add(c, 0, j);
+            j++;
+            Label d= new Label("candidate ID      : "+id.get(i-1));
+            grid.add(d, 0, j);
+            j++;
+            Label e= new Label("candidate party   : "+party.get(i-1));
+            grid.add(e, 0, j);
+            j++;
+        }
+		
+		home.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				homepage(grid);
+			}
+				
+		});
+		
+	}
+
+	private void regPage(GridPane grid) {
+    	grid.getChildren().clear();
+    	
+    	  // Create a label for the name
+        Label nameLabel = new Label("Name:");
+        grid.add(nameLabel, 0, 1);
+
+        // Create a text field for the name
+        final TextField nameField = new TextField();
+        grid.add(nameField, 1, 1);
+        
+        Label usernameLabel = new Label("AGE:");
+        grid.add(usernameLabel, 0, 2);
+
+        // Create a text field for the username
+        final TextField usernameField = new TextField();
+        grid.add(usernameField, 1, 2);
+        
+        // Create a label for the password
+        Label passwordLabel = new Label("Password:");
+        grid.add(passwordLabel, 0, 3);
+
+        // Create a password field for the password
+        PasswordField passwordField = new PasswordField();
+        grid.add(passwordField, 1, 3);
+
+
+        // Create a register button
+        Button registerButton = new Button("Register");
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(registerButton);
+        grid.add(hbBtn, 1, 4);
+
+        // Set an action for the register button
+        registerButton.setOnAction(event -> {
+        	if((Integer.parseInt(usernameField.getText())) > 18 ) {
+        		userlist.add(nameField.getText());
+                passwordlist.add(passwordField.getText());
+                grid.getChildren().clear();
+                Label questionLabel = new Label  ("Registration successful.\n You can now login.");
+                grid.add(questionLabel, 0, 0);
+                page(grid);
+        	}else {
+        		Label u = new Label("Invalid Age");
+                grid.add(u, 1, 4);
+           
+            }
+    
+        });
+	}
+	
+
+    public static String[] counter(String[] input) {
+        Map<String, Integer> frequencyMap = new HashMap<>();
+        for (String s : input) {
+            if (frequencyMap.containsKey(s)) {
+                frequencyMap.put(s, frequencyMap.get(s) + 1);
+            } else {
+                frequencyMap.put(s, 1);
+            }
+        }
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(frequencyMap.entrySet());
+        list.sort((o1, o2) -> o2.getValue() - o1.getValue());
+        return list.stream().map(Map.Entry::getKey).toArray(String[]::new);
+    }
+    
+    
+
+	private boolean validateCredentials(String username, String password) {
+        if(userlist.contains(username)){
+        	if(passwordlist.contains(password)) {
+        		return true;
+        	}
+        }
+        return false;
+    }
+
+    private void showVotingPage(GridPane grid) {
+    	grid.getChildren().clear();
+    	 // Create a label for the question
+        Label questionLabel = new Label("Who do you want to vote for?");
+        grid.add(questionLabel, 0, 0);
+
+        // Create a toggle group to hold the radio buttons
+        final ToggleGroup group = new ToggleGroup();
+        for(int i=1; i<=nominee.size();i++) {
+        	RadioButton rb1 = new RadioButton("candidate "+i+" : "+nominee.get(i-1));
+            rb1.setToggleGroup(group);
+            grid.add(rb1, 0, i);
+        }
+        
+
+        // Create a submit button
+        Button submitButton = new Button("Submit");
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(submitButton);
+        grid.add(hbBtn, 0, nominee.size()+1);
+
+        
+
+        // Set an action for the submit button
+        submitButton.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				grid.getChildren().clear();
+			    RadioButton selectedRadioButton = (RadioButton) group.getSelectedToggle();
+			    String vote = selectedRadioButton.getText();
+			    result[i]=vote;
+			    i++;
+			    Button home = new Button("Home Page");
+		        grid.add(home, 0, 0);
+		        Label resultLabel = new Label();
+		        grid.add(resultLabel, 0, 2);
+			    resultLabel.setText("Your vote for " + vote + " has been submitted.");
+			    home.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						homepage(grid);
+					}
+						
+				});
+			}
+		});
+
+  
+    }
+
+    private void showErrorMessage(String message, GridPane grid) {
+    	Label usernameLabel = new Label(message);
+        grid.add(usernameLabel, 1, 3);
+    }
+}
